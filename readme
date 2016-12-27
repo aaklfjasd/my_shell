@@ -1,0 +1,136 @@
+##################################################################################################################
+	myshell		by Bill Daws		tuf57013@temple.edu or bill.daws@temple.edu
+	CIS3207		Operating Systems Project 2		    Professor Eugene Kwatny
+##################################################################################################################	
+
+usage summary:
+      Generally:
+	{executable} {arguments}
+	entering a command with a syntax like the general form specified above will execute the
+	specified executable while passing it the specified arguments.
+	
+	the arguments need to be separated by whitespace.
+	press Enter to submit a command.
+
+detail:
+	myshell supports IO redirection (stdin/stdout/stderr) and piping. it also supports batchfiles.
+	the syntax for such commands is explained below.
+	
+internal commands:
+	 ----------------------------------------------------------------------------------
+	 command		| description
+	 ----------------------------------------------------------------------------------
+	 cd <directory>		| changes the current directory to the specified directory.
+	 clr 			| clears the screen (terminal). "clear" is also acceptable.
+	 dir <directory>	| lists the contents of the specified directory.
+	 environ		| lists the environment variables.
+	 echo <statement>	| prints <statement> to the screen.
+	 help 			| displays this file using the "more" filter.
+	 pause			| forces myshell to wait for you to press Enter.
+	 quit 			| exits myshell.
+	 ----------------------------------------------------------------------------------
+
+redirection and piping:
+	    myshell should support I/O redirection and piping. these operations allow the user
+	    to specify files to use to contain either input or output to executables.
+	    for example, this command:
+	    	dir . > dir.txt
+	    should write the output of "dir ." to the file dir.txt. this will erase dir.txt's
+	    previous contents, so be careful.
+	    Generally:
+	        {executable} {arguments} > {output file}
+
+	    this command:
+	    	dir . >> dir.txt
+	    should append the output of "dir ." to the file dir.txt. this will not erase dir.txt's
+	    previous contents.
+	    Generally:
+	        {executable} {arguments} >> {output file}
+
+	    for input, this command:
+	    	./a.out < hello.txt
+	    should run a.out with hello.txt as its input.
+	    Generally:
+	        {executable} {arguments} < {input file}
+
+	    commands can have both input and output redirection. this command:
+	        wc < hello.txt > out.txt
+	    should write the contents of "wc < hello.txt" to out.txt.
+	    additionally,
+		cat < hello.txt > out.txt
+	    will simply write hello.txt to out.txt. this particular command is more useful with
+	    appending, like so:
+	    	cat < hello.txt >> out.txt
+	    this command will *append* hello.txt to the end of out.txt.
+	    
+	    Generally:
+	        {executable} {arguments} < {input file} > {output file}
+		or
+		{executable} {arguments} < {input file} >> {output file}
+
+
+
+	    piping allows the user to pass the output of a program as the input of another.
+	    so this command:
+	        dir . | wc
+	    should pass the output of "dir ." to wc, thus taking the output of "dir ." and
+	    sending it to wc.
+	    
+	    Generally:
+		{executable (passing out)} {arguments} | {executable (passing in} {arguments}
+
+background:
+	myshell should support running processes in the background. to do this, add & to the end
+	of your command.
+	Generally:
+		{executable} {arguments} &
+	Note: & must be at the end.
+
+batchfiles:
+	myshell supports batchfiles. to do this, your command must follow this format:
+		myshell {batchfile path}
+	Note: you must specifically call myshell.
+	      if you are in the bash shell (or whatever standard shell your OS uses) then you
+	      can still pass the batchfile as an argument to myshell.
+	      if you are already in myshell, you must call myshell once again and pass the batchfile
+	      as an argument on the same line.
+	      For example, the following commands will do the same thing:
+	      	  bash: bill@bill:~/Desktop/> myshell ./batchfile
+		 --OR--
+		  myshell: bill@bill:myshell/> myshell ./batchfile
+	      Note that in the first command, I am using the bash shell that is built into my computer's
+	      operating system. In the second command, I am already in my shell. These two commands will
+	      do the same thing.
+	      You do not have to reference myshell by path, but you MUST reference batchfile by path.
+	      in other words, to reference some batchfile contained within a directory called "some_directory",
+	      this command will work:
+	      bill@bill:myshell/> myshell ./some_directory/some_batchfile
+	      whereas this command will not work:
+	      bill@bill:myshell/> myshell some_batchfile
+	      unless some_batchfile also exists in the current working directory. Even if that is the case,
+	      it is best to reference some_batchfile via pathname, e.g. "./some_batchfile".
+
+	      ******************************************************************************
+			     	            IMPORTANT NOTICE
+	      ******************************************************************************
+		YOU MUST END YOUR BATCHFILE WITH AN EMPTY LINE. THIS IS NOT OPTIONAL.
+		IF YOU DO NOT DO THIS, YOU WILL NOT GET EXPECTED OR DESIRABLE RESULTS.
+		for example, this batchfile is fine:
+		$batchfile$
+			command
+			command
+			command
+			___ //where this is simply an empty line
+		$end batchfile$
+
+		this batchfile is not fine:
+		$batchfile$
+			command
+			command
+			command
+		$end batchfile$
+
+		This is due to the way myshell parses batchfiles. If you do not end it in a newline,
+		myshell will not be able to terminate execution of your batchfile. I was planning on fixing
+		this behavior, but I found no way to do it without writing over part of the batchfile itself,
+		which is less desirable than simply instituting a rule on the way myshell accepts batchfiles.
